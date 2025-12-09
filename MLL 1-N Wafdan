@@ -56,8 +56,77 @@ void deleteAchievementsByAchievementName(ListGame &L, string achievementName);
 void updateGameAddAchievement(ListGame &L, string &title, string &newAchievementName);
 void updateAchievementName(ListGame &L, string &title, string &oldName, string &newName);
 
+#include <iostream>
+#include "Tubes_MLL.h"
+using namespace std;
 
+void createListGame(ListGame &L) {
+    L.first = nullptr;
+    L.last = nullptr;
+}
 
+bool isEmptyGame(ListGame L) {
+    return (L.first == nullptr);
+}
 
+bool isEmptyAchievement(adrGame p) {
+    return (p->firstACV == nullptr);
+}
+
+adrGame createElmGame(string GameID, string title, string genre, string platform) {
+    adrGame p = new elmGame;
+    p->info.GameID = GameID;
+    p->info.title = title;
+    p->info.genre = genre;
+    p->info.platform = platform;
+    p->next = nullptr;
+    p->prev = nullptr; 
+    return p;
+}
+
+adrAchievement createElmAchievement(string achievementName) {
+    adrAchievement q = new elmAchievement;
+    q->info.achievementName = achievementName;
+    q->next = nullptr;
+    q->prev= nullptr;
+    return q;
+}
+
+void addGame(ListGame &L, adrGame p) {
+    if (isEmptyGame(L)) {
+        L.first = p;
+        L.last = p;
+    } else {
+        L.last->next = p;
+        p->prev = L.last;
+        L.last = p;
+    }
+}
+
+void addAchievement(adrGame &p, adrAchievement q) {
+    adrGame x;
+    if (p->firstACV == nullptr) {
+        p->firstACV = q;
+    } else {
+        x = p->firstACV;
+        while (x->next != nullptr) {
+            x = x->next;
+        }
+        x->next = q;
+        q->prev = x;
+    }
+}
+
+adrGame searchGame(ListGame L, string title, string genre, string platform) {
+    adrGame p;
+    p = L.first;
+    while (p != nullptr) {
+        if(p->info.title == title && p->info.genre == genre && p->info.platform == platform) {
+            return p;
+        } 
+        p = p->next;
+    }
+    return nullptr; 
+}
 
 #endif // HEADER(MLL)_H_INCLUDED
