@@ -30,5 +30,6 @@ struct Game {
 // LIST PARENT
 // ---------------------------------------------
 struct GameList {
-    adrGame head;
+    adrGame first;
 };
+
