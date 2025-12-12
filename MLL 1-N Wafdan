@@ -1,3 +1,5 @@
+ADT Program
+Header
 #ifndef HEADER(MLL)_H_INCLUDED
 #define HEADER(MLL)_H_INCLUDED
 
@@ -37,6 +39,9 @@ struct ListGame {
     adrGame last;
 };
 
+#endif // TUBES_MLL_H_INCLUDED
+
+CPP
 void createListGame(ListGame &L);
 bool isEmptyGame(ListGame L);
 bool isEmptyAchievement(adrAchievement p);
@@ -80,7 +85,7 @@ adrGame createElmGame(string GameID, string title, string genre, string platform
     p->info.genre = genre;
     p->info.platform = platform;
     p->next = nullptr;
-    p->prev = nullptr; 
+    p->prev = nullptr;
     return p;
 }
 
@@ -104,7 +109,7 @@ void addGame(ListGame &L, adrGame p) {
 }
 
 void addAchievement(adrGame &p, adrAchievement q) {
-    adrGame x;
+    adrAchievement x;
     if (p->firstACV == nullptr) {
         p->firstACV = q;
     } else {
@@ -123,10 +128,94 @@ adrGame searchGame(ListGame L, string title, string genre, string platform) {
     while (p != nullptr) {
         if(p->info.title == title && p->info.genre == genre && p->info.platform == platform) {
             return p;
-        } 
+        }
         p = p->next;
     }
-    return nullptr; 
+    return nullptr;
 }
 
-#endif // HEADER(MLL)_H_INCLUDED
+void deleteGameByTitle(ListGame &L, string title) {
+    adrGame p = L.first;
+
+    while (p != nullptr) {
+
+        if (p->info.title == title) {
+            adrGame nextParent = p->next;
+            if (p == L.first) {
+                L.first = p->next;
+                if (L.first != nullptr) {
+                    L.first->prev = nullptr;
+                }
+            } else if (p == L.last) {
+                L.last = p->prev;
+                if (L.last != nullptr) {
+                    L.last->next = nullptr;
+                }
+            } else {
+                p->prev->next = p->next;
+                p->next->prev = p->prev;
+            }
+            p = nextParent;
+        } else {
+            p = p->next;
+        }
+    }
+}
+
+void deleteAchievementsByAchievementName(ListGame &L, string achievementName) {
+    adrGame p = L.first;
+
+    while (p != nullptr) {
+        adrAchievement q = p->firstACV;
+        while (q != nullptr) {
+            if (q->info.achievementName == achievementName) {
+                adrAchievement nextChild = q->next;
+                if (q == p->firstACV) {
+                    p->firstACV = q->next;
+                    if (p->firstACV != nullptr) {
+                        p->firstACV->prev = nullptr;
+                    }
+                } else if (q->next == nullptr) {
+                    q->prev->next = nullptr;
+                } else {
+                    q->prev->next = q->next;
+                    q->next->prev = q->prev;
+                }
+                q = nextChild;
+            } else {
+                q = q->next;
+            }
+        }
+        p = p->next;
+    }
+}
+
+void updateGameAddAchievement(ListGame &L, string &title, string &newAchievementName) {
+    adrGame p = L.first;
+
+    while (p != nullptr) {
+        if (p->info.title == title) {
+            adrAchievement newNode = createElmAchievement(newAchievementName);
+            addAchievement(p, newNode);
+        }
+        p = p->next;
+    }
+}
+
+void updateAchievementName(ListGame &L, string &title, string &oldName, string &newName) {
+    adrGame p = L.first;
+
+    while (p != nullptr) {
+        if (p->info.title == title) {
+            adrAchievement q = p->firstACV;
+            while (q != nullptr) {
+                if (q->info.achievementName == oldName) {
+                    q->info.achievementName = newName;
+                }
+                q = q->next;
+            }
+        }
+        p = p->next;
+    }
+}
+
