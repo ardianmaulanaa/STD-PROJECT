@@ -1,95 +1,318 @@
-#ifndef HEADER(MLL)_H_INCLUDED
-#define HEADER(MLL)_H_INCLUDED
+CPP
 
 #include <iostream>
-using namespace std;
+#include "header_MLL.h"
 
-typedef struct elmGame *adrGame;
-typedef struct elmAchievement *adrAchievement;
-
-struct Game {
-    string GameID;
-    string title;
-    string genre;
-    string platform;
+void welcomePage(){
+    cout << endl<< "===================================================" << endl;
+    cout << "      SELAMAT DATANG DI MANAJEMEN KOLEKSI    " << endl;
+    cout << "                GAME                  " << endl;
+    cout << "===================================================" << endl;
 };
 
-struct Achievement {
-    string achievementName;
+void fiturPage(){
+    cout << "              MENU FITUR                " << endl;
+    cout << "===================================================" << endl;
+    cout << "1. Masukkan Data Game" << endl;
+    cout << "2. Masukkan Data Achievement" << endl;
+    cout << "3. Lihat List Game" << endl;
+    cout << "4. Lihat List Achievement" << endl;
+    cout << "5. Hapus Data Game" << endl;
+    cout << "6. Hapus Data Achievement" << endl;
+    cout << "7. Update Data Game" << endl;
+    cout << "8. Update Data Achievement" << endl;
+    cout << "9. Cari Game" << endl;
+    cout << "10. Cari Achievement" << endl;
+    cout << "11. Urutkan Game" << endl;
+    cout << "12. Urutkan Achievement per Game" << endl;
+    cout << "13. Total Game " << endl;
+    cout << "14. Total Achievement" << endl;
+    cout << "15. Keluar" << endl;
+    cout << "===================================================" << endl;
+
 };
 
-struct elmGame {
-    Game info;
-    adrGame next;
-    adrGame prev;
-    adrAchievement firstACV;
+void closeCMD(){
+    cout << endl<< "===================================================" << endl;
+    cout << "      TERIMAKASIH SUDAH MENGAKSES MANAJEMEN KOLEKSI    " << endl;
+    cout << "                GAME                  " << endl;
+    cout << "===================================================" << endl<<endl;
+
 };
 
-struct elmAchievement {
-    Achievement info;
-    adrAchievement next;
-    adrAchievement prev;
+void displayListGame(ListGame L) {
+    adrGame p = L.first;
+    cout << endl;
+    cout << "===================[LIST GAME]====================" << endl;
+    while (p != nullptr) {
+        cout << "ID Game                : ";
+        cout << p->info.GameID << endl;
+        cout << "Judul Game             : ";
+        cout << p->info.title << endl;
+        cout << "Genre                  : ";
+        cout << p->info.genre << endl;
+        cout << "Platform               : ";
+        cout << p->info.platform << endl;
+
+
+        adrAchievement q = p->firstACV;
+        if (q == nullptr) {
+            cout << "Achievements           : (Belum ada achievement)" << endl;
+        } else {
+            cout << "Achievements           : " << endl;
+            while (q != nullptr) {
+                cout << "   - " << q->info.achievementName << endl;
+                q = q->next;
+            }
+        }
+
+        p = p->next;
+        cout << endl;
+    }
+}
+
+// display list acv?
+
+// end procedure tampilan
+
+void executeOpsi(ListGame &L, adrGame game, adrAchievement acv, int opsi) {
+}
+
+
+void createListGame(ListGame &L) {
+    L.first = nullptr;
+    L.last = nullptr;
+}
+bool isEmptyGame(ListGame L) {
+    return (L.first == nullptr && L.last == nullptr);
+}
+bool isEmptyAchievement(adrGame p) {
+    return (p->firstACV == nullptr);
+}
+
+bool isGameExists(ListGame L, string judulGame){
+    adrGame p = L.first;
+    while(p!= nullptr){
+        if(p->info.title == judulGame){
+            return true;
+        }
+        p=p->next;
+    }
+    return false;
 };
 
-struct ListGame {
-    adrGame first;
-    adrGame last;
-};
 
-// #Greetings
-void fiturPage();
-void welcomePage();
-void closeCMD();
+adrGame createElmGame(string GameID, string title, string genre, string platform) {
+    adrGame p = new elmGame;
 
-//Create
-void createListGame(ListGame &L);
-bool isEmptyGame(ListGame L);
-bool isEmptyAchievement(adrAchievement p);
-adrGame createElmGame(string GameID, string title, string genre, string platform);
-adrAchievement createElmAchievement(string achievementName);
+    p->info.GameID = GameID;
+    p->info.title = title;
+    p->info.genre = genre;
+    p->info.platform = platform;
+    p->firstACV = nullptr;
+    p->next = nullptr;
+    p->prev = nullptr;
 
-//Add
-void addGame(ListGame &L, adrGame p);
-void addAchievement(adrGame &p, adrAchievement q);
+    return p;
 
-//Search
-adrGame searchGame(ListGame L, string title, string genre, string platform);
-adrAchievement searchAchievement(adrGame p, string achievementName);
+}
 
-//Count
-int countAchievement(adrAchievement firstACV);
+adrAchievement createElmAchievement(string achievementName) {
+    adrAchievement q = new elmAchievement;
 
-//Get
-adrGame getGameWithMaxAchievement(ListGame L);
+    q->info.achievementName = achievementName;
+
+    q->next = nullptr;
+    q->prev = nullptr;
+
+    return q;
+}
+
+
+// end utils
+
+
+// Masukkan data Game dan Achievement
+
+void addGame(ListGame &L, adrGame p) {
+    if(isEmptyGame(L)) {
+        L.first = p;
+        L.last = p;
+        p->next = nullptr;
+        p->prev = nullptr;
+    } else {
+        L.last->next = p;
+        p->prev = L.last;
+        p->next = nullptr;
+        p->prev = nullptr;
+        L.last = p;
+    }
+    p->next = nullptr;
+}
+
+void addAchievement(adrGame &q, adrAchievement p) {
+    adrAchievement x;
+    if (isEmptyAchievement(q)) {
+        q->firstACV = p;
+        p->next = nullptr;
+        p->prev = nullptr;
+    } else {
+        adrAchievement r = q->firstACV;
+        while (r->next != nullptr) {
+            r = r->next;
+        }
+        r->next = p;
+        p->prev = r;
+        p->next = nullptr;
+    }
+}
+
+// end input data Game dan Achievement
+
+// Hapus data Game dan Achievement
+void deleteGameByTitle(ListGame &L, string title) {
+    if(isEmptyGame(L)) {
+        adrGame p = searchGame(L, title);
+        if(!isEmptyGame(L)) {
+            if(p == L.first && p == L.last) {
+                L.first = nullptr;
+                L.last = nullptr;
+                cout << "Data berhasil dihapus" << endl;
+            } else if(p == L.first) {
+
+            }
+        }
+    }
+}
+
+void deleteAchievementsByAchievementName(ListGame &L, string achievementName) {
+    adrGame p = L.first;
+
+    while (p != nullptr) {
+        adrAchievement q = p->firstACV;
+        while (q != nullptr) {
+            if (q->info.achievementName == achievementName) {
+                adrAchievement nextChild = q->next;
+                if (q == p->firstACV) {
+                    p->firstACV = q->next;
+                    if (p->firstACV != nullptr) {
+                        p->firstACV->prev = nullptr;
+                    }
+                } else if (q->next == nullptr) {
+                    q->prev->next = nullptr;
+                } else {
+                    q->prev->next = q->next;
+                    q->next->prev = q->prev;
+                }
+                q = nextChild;
+            } else {
+                q = q->next;
+            }
+        }
+        p = p->next;
+    }
+}
+
+// end hapus data
+
+// mencari data game
+
+adrGame searchGame(ListGame L, string title, string genre, string platform) {
+    adrGame p;
+    p = L.first;
+    while (p != nullptr) {
+        if(p->info.title == title && p->info.genre == genre && p->info.platform == platform) {
+            return p;
+        }
+        p = p->next;
+    }
+    return nullptr;
+}
+
+adrAchievement searchAchievement(adrGame p, string achievementName) {
+    if (p->firstACV != nullptr){
+        adrAchievement q = p->firstACV;
+        while(q != nullptr) {
+            if(q->info.achievementName =  achievementName) {
+                return q;
+            }
+            q = q->next
+        }
+    }
+    return nullptr;
+}
+
+void updateGameAddAchievement(ListGame &L, string &title, string &newAchievementName) {
+ adrGame p = L.first;
+
+    while (p != nullptr) {
+        if (p->info.title == title) {
+            adrAchievement newNode = createElmAchievement(newAchievementName);
+            addAchievement(p, newNode);
+        }
+        p = p->next;
+    }
+}
+
+// end cari data game
+
+// edit | update data game
+
+void updateAchievementName(ListGame &L, string &title, string &oldName, string &newName) {
+  adrGame p = L.first;
+
+    while (p != nullptr) {
+        if (p->info.title == title) {
+            adrAchievement q = p->firstACV;
+            while (q != nullptr) {
+                if (q->info.achievementName == oldName) {
+                    q->info.achievementName = newName;
+                }
+                q = q->next;
+            }
+        }
+        p = p->next;
+    }
+}
+
+
+
+
+int countAchievement(adrAchievement firstACV) {
+    int count = 0;
+    adrAchievement p = firstACV;
+
+    while(p != nullptr) {
+        count++;
+        p=p->next;
+    }
+    return count;
+}
+
+adrGame getGameWithMaxAchievement(ListGame L) {
+    if (isEmptyGame(L)) {
+        return nullptr;
+    }
+    adrGame p = L.first;
+    adrGame maxGame = p;
+    int maxCount = countAchievement(p->firstACV);
+
+    while (p != nullptr) {
+    int currentCount = countAchievement(p->firstACV);
+    if (currentCount > maxCount) {
+        maxCount = currentCount;
+        maxGame = p;
+        }
+    p=p->next;
+
+    }
+return maxGame;
+}
+
 adrGame getGameWithMinAchievement(ListGame L);
-
-//View
 void viewMaxAchievement(ListGame L);
 void viewMinAchievement(ListGame L);
 
-//Display
-void displayGameList(ListGame L);
 
-//Delete
-void deleteGameByTitle(ListGame &L, string title);
-void deleteAchievementsByAchievementName(ListGame &L, string achievementName);
 
-//Update
-void updateGameAddAchievement(ListGame &L, string &title, string &newAchievementName);
-void updateAchievementName(ListGame &L, string &title, string &oldName, string &newName);
-
-//Sorting
-void sortGameByTitle(ListGame &L);
-void sortGameByGenre(ListGame &L);
-void sortGameByPlatform(ListGame &L);
-void sortGameByAchievementCount(ListGame &L);
-
-//Menu
-void mainMenu(ListGame &L);
-void gameMenu(ListGame &L);
-void achievementMenu(ListGame &L);
-
-//Utility
-void clearScreen();
-
-#endif // HEADER(MLL)_H_INCLUDED
+using namespace std;
