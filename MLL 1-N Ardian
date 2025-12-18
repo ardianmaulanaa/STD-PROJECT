@@ -1,0 +1,9 @@
+#include <iostream>
+#include "header_MLL.h"
+using namespace std;
+
+int main()
+{
+    cout << "Input Nama Game-" << endl;
+    return 0;
+}
