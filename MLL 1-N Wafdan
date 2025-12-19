@@ -1,10 +1,9 @@
-ADT Program
-Header
+Head
+
 #ifndef HEADER(MLL)_H_INCLUDED
 #define HEADER(MLL)_H_INCLUDED
 
 #include <iostream>
-
 using namespace std;
 
 typedef struct elmGame *adrGame;
@@ -39,22 +38,57 @@ struct ListGame {
     adrGame last;
 };
 
+// #Greetings
+void fiturPage();
+void welcomePage();
+void closeCMD();
+
+//Eksekusi Fitur
+//void executeOpsi(ListGame &L, adrGame game, adrAchievement acv, int opsi);
+void executeOpsi(ListGame &L, int opsi);
+
+//Create
 void createListGame(ListGame &L);
 bool isEmptyGame(ListGame L);
 bool isEmptyAchievement(adrAchievement p);
+bool isGameExists(ListGame L, string judulGame);
 adrGame createElmGame(string GameID, string title, string genre, string platform);
 adrAchievement createElmAchievement(string achievementName);
+
+//Add
 void addGame(ListGame &L, adrGame p);
 void addAchievement(adrGame &p, adrAchievement q);
+
+//Display
+void displayListGame(ListGame L);
+
+//Delete
+void deleteGameByTitle(ListGame &L, string title, string genre, string platformy);
+void deleteAchievementsByAchievementName(ListGame &L, string achievementName);
+
+//Update
+void updateGame(ListGame &L, string oldTitle, string newGameID, string newTitle, string newGenre, string newPlatform);
+void updateAchievementName(ListGame &L, string &title, string &oldName, string &newName);
+
+//Search
 adrGame searchGame(ListGame L, string title, string genre, string platform);
+adrAchievement searchAchievement(adrGame p, string achievementName);
+
+//Sorting
+void sortGameByTitle(ListGame &L);
+void sortGameByAchievementCount(ListGame &L);
+
+//Count
 int countAchievement(adrAchievement firstACV);
+int countGameByPlatform(ListGame L, string platform);
+int countGameByGenre(ListGame L, string genre);
+
+//Get
 adrGame getGameWithMaxAchievement(ListGame L);
 adrGame getGameWithMinAchievement(ListGame L);
-void viewMaxAchievement(ListGame L);
-void viewMinAchievement(ListGame L);
-void displayGameList(ListGame L);
-void deleteGameByTitle(ListGame &L, string title);
-void deleteAchievementsByAchievementName(ListGame &L, string achievementName);
-void updateGameAddAchievement(ListGame &L, string &title, string &newAchievementName);
-void updateAchievementName(ListGame &L, string &title, string &oldName, string &newName);
-#endif // TUBES_MLL_H_INCLUDED
+
+
+//Utility
+void clearScreen();
+
+#endif // HEADER(MLL)_H_INCLUDED
