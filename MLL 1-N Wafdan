@@ -1,221 +1,27 @@
-ADT Program
-Header
-#ifndef HEADER(MLL)_H_INCLUDED
-#define HEADER(MLL)_H_INCLUDED
+Main
 
 #include <iostream>
-
+#include "header_MLL.h"
 using namespace std;
 
-typedef struct elmGame *adrGame;
-typedef struct elmAchievement *adrAchievement;
+int main() {
 
-struct Game {
-    string GameID;
-    string title;
-    string genre;
-    string platform;
-};
+    ListGame L;
+    createListGame(L);
 
-struct Achievement {
-    string achievementName;
-};
+    int opsi;
 
-struct elmGame {
-    Game info;
-    adrGame next;
-    adrGame prev;
-    adrAchievement firstACV;
-};
+    welcomePage();
 
-struct elmAchievement {
-    Achievement info;
-    adrAchievement next;
-    adrAchievement prev;
-};
+    while (opsi != 0) {
+        fiturPage();
+        cout << "Pilih opsi: ";
+        cin >> opsi;
 
-struct ListGame {
-    adrGame first;
-    adrGame last;
-};
-
-#endif // TUBES_MLL_H_INCLUDED
-
-CPP
-void createListGame(ListGame &L);
-bool isEmptyGame(ListGame L);
-bool isEmptyAchievement(adrAchievement p);
-adrGame createElmGame(string GameID, string title, string genre, string platform);
-adrAchievement createElmAchievement(string achievementName);
-void addGame(ListGame &L, adrGame p);
-void addAchievement(adrGame &p, adrAchievement q);
-adrGame searchGame(ListGame L, string title, string genre, string platform);
-int countAchievement(adrAchievement firstACV);
-adrGame getGameWithMaxAchievement(ListGame L);
-adrGame getGameWithMinAchievement(ListGame L);
-void viewMaxAchievement(ListGame L);
-void viewMinAchievement(ListGame L);
-void displayGameList(ListGame L);
-void deleteGameByTitle(ListGame &L, string title);
-void deleteAchievementsByAchievementName(ListGame &L, string achievementName);
-void updateGameAddAchievement(ListGame &L, string &title, string &newAchievementName);
-void updateAchievementName(ListGame &L, string &title, string &oldName, string &newName);
-
-#include <iostream>
-#include "Tubes_MLL.h"
-using namespace std;
-
-void createListGame(ListGame &L) {
-    L.first = nullptr;
-    L.last = nullptr;
-}
-
-bool isEmptyGame(ListGame L) {
-    return (L.first == nullptr);
-}
-
-bool isEmptyAchievement(adrGame p) {
-    return (p->firstACV == nullptr);
-}
-
-adrGame createElmGame(string GameID, string title, string genre, string platform) {
-    adrGame p = new elmGame;
-    p->info.GameID = GameID;
-    p->info.title = title;
-    p->info.genre = genre;
-    p->info.platform = platform;
-    p->next = nullptr;
-    p->prev = nullptr;
-    return p;
-}
-
-adrAchievement createElmAchievement(string achievementName) {
-    adrAchievement q = new elmAchievement;
-    q->info.achievementName = achievementName;
-    q->next = nullptr;
-    q->prev= nullptr;
-    return q;
-}
-
-void addGame(ListGame &L, adrGame p) {
-    if (isEmptyGame(L)) {
-        L.first = p;
-        L.last = p;
-    } else {
-        L.last->next = p;
-        p->prev = L.last;
-        L.last = p;
-    }
-}
-
-void addAchievement(adrGame &p, adrAchievement q) {
-    adrAchievement x;
-    if (p->firstACV == nullptr) {
-        p->firstACV = q;
-    } else {
-        x = p->firstACV;
-        while (x->next != nullptr) {
-            x = x->next;
-        }
-        x->next = q;
-        q->prev = x;
-    }
-}
-
-adrGame searchGame(ListGame L, string title, string genre, string platform) {
-    adrGame p;
-    p = L.first;
-    while (p != nullptr) {
-        if(p->info.title == title && p->info.genre == genre && p->info.platform == platform) {
-            return p;
-        }
-        p = p->next;
-    }
-    return nullptr;
-}
-
-void deleteGameByTitle(ListGame &L, string title) {
-    adrGame p = L.first;
-
-    while (p != nullptr) {
-
-        if (p->info.title == title) {
-            adrGame nextParent = p->next;
-            if (p == L.first) {
-                L.first = p->next;
-                if (L.first != nullptr) {
-                    L.first->prev = nullptr;
-                }
-            } else if (p == L.last) {
-                L.last = p->prev;
-                if (L.last != nullptr) {
-                    L.last->next = nullptr;
-                }
-            } else {
-                p->prev->next = p->next;
-                p->next->prev = p->prev;
-            }
-            p = nextParent;
-        } else {
-            p = p->next;
+        if (opsi != 0) {
+            executeOpsi(L, opsi);
         }
     }
+    closeCMD();
+    return 0;
 }
-
-void deleteAchievementsByAchievementName(ListGame &L, string achievementName) {
-    adrGame p = L.first;
-
-    while (p != nullptr) {
-        adrAchievement q = p->firstACV;
-        while (q != nullptr) {
-            if (q->info.achievementName == achievementName) {
-                adrAchievement nextChild = q->next;
-                if (q == p->firstACV) {
-                    p->firstACV = q->next;
-                    if (p->firstACV != nullptr) {
-                        p->firstACV->prev = nullptr;
-                    }
-                } else if (q->next == nullptr) {
-                    q->prev->next = nullptr;
-                } else {
-                    q->prev->next = q->next;
-                    q->next->prev = q->prev;
-                }
-                q = nextChild;
-            } else {
-                q = q->next;
-            }
-        }
-        p = p->next;
-    }
-}
-
-void updateGameAddAchievement(ListGame &L, string &title, string &newAchievementName) {
-    adrGame p = L.first;
-
-    while (p != nullptr) {
-        if (p->info.title == title) {
-            adrAchievement newNode = createElmAchievement(newAchievementName);
-            addAchievement(p, newNode);
-        }
-        p = p->next;
-    }
-}
-
-void updateAchievementName(ListGame &L, string &title, string &oldName, string &newName) {
-    adrGame p = L.first;
-
-    while (p != nullptr) {
-        if (p->info.title == title) {
-            adrAchievement q = p->firstACV;
-            while (q != nullptr) {
-                if (q->info.achievementName == oldName) {
-                    q->info.achievementName = newName;
-                }
-                q = q->next;
-            }
-        }
-        p = p->next;
-    }
-}
-
