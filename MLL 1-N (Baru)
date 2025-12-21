@@ -1,0 +1,96 @@
+#ifndef HEADER(MLL)_H_INCLUDED
+#define HEADER(MLL)_H_INCLUDED
+
+#include <iostream>
+using namespace std;
+
+typedef struct elmGame*adrGame;
+typedef struct elmAchievement*adrAchievement;
+
+struct Game {
+    string GameID;
+    string title;
+    string genre;
+    string platform;
+};
+
+struct Achievement {
+    string achievementName;
+};
+
+struct elmGame {
+    Game info;
+    adrGame next;
+    adrGame prev;
+    adrAchievement firstACV;
+};
+
+struct elmAchievement {
+    Achievement info;
+    adrAchievement next;
+    adrAchievement prev;
+};
+
+struct ListGame {
+    adrGame first;
+    adrGame last;
+};
+
+// #Greetings
+void fiturPage();
+void welcomePage();
+void closeCMD();
+
+//Eksekusi Fitur
+//void executeOpsi(ListGame &L, adrGame game, adrAchievement acv, int opsi);
+void executeOpsi(ListGame &L, int opsi);
+
+//Create
+void createListGame(ListGame &L);
+bool isEmptyGame(ListGame L);
+bool isEmptyAchievement(adrAchievement p);
+bool isGameExists(ListGame L, string judulGame);
+adrGame createElmGame(string GameID, string title, string genre, string platform);
+adrAchievement createElmAchievement(string achievementName);
+
+//Add
+void addGame(ListGame &L, adrGame p);
+void addAchievement(adrGame &p, adrAchievement q);
+
+//Display
+void displayListGame(ListGame L);
+void displayGame(adrGame p);
+
+
+//Delete
+void deleteGameByTitle(ListGame &L, string title);
+void deleteAchievementsByAchievementName(ListGame &L, string achievementName);
+
+//Update
+void updateGame(ListGame &L);
+void updateAchievementName(ListGame &L, string &title, string &oldName, string &newName);
+
+//Search
+adrGame searchGameByTitle(ListGame L, string title);
+void searchGameByGenre(ListGame L, string genre);
+void searchGameByPlatform(ListGame L, string platform);
+void searchAchievementByTitle(adrGame p);
+
+//Sorting
+void sortGameByTitle(ListGame &L);
+void sortGameByAchievementCount(ListGame &L);
+
+//Count
+int countAchievement(adrAchievement firstACV);
+int countGameByPlatform(ListGame L, string platform);
+int countGameByGenre(ListGame L, string genre);
+
+//Get
+adrGame getGameWithMaxAchievement(ListGame L);
+adrGame getGameWithMinAchievement(ListGame L);
+
+
+//Utility
+void clearScreen();
+
+#endif // HEADER(MLL)_H_INCLUDED
