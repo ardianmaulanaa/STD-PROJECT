@@ -81,6 +81,7 @@ void sortGameByTitle(ListGame &L);
 void sortGameByAchievementCount(ListGame &L);
 
 //Count
+int countGameByTitle(ListGame L, string title);
 int countAchievement(adrAchievement firstACV);
 int countGameByPlatform(ListGame L, string platform);
 int countGameByGenre(ListGame L, string genre);
