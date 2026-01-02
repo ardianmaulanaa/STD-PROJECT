@@ -830,6 +830,19 @@ void sortGameByAchievementCount(ListGame &L) {
 
 // Count
 
+//Total Game
+
+int countGameByTitle(ListGame L, string title) {
+    int count = 0;
+    adrGame p = L.first;
+
+    while (p != nullptr) {
+        count++;
+        p = p->next;
+    }
+    return count;
+}
+
 // Total Game Berdasarkan Genre
 
 int countGameByGenre(ListGame L, string genre) {
