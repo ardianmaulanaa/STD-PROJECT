@@ -1,17 +1,17 @@
 #include <iostream>
-#include "header_MLL.h"
+#include "MLL.h"
 using namespace std;
 
 // #Greetings
 void welcomePage(){
     cout << endl<< "===================================================" << endl;
     cout << "      SELAMAT DATANG DI MANAJEMEN KOLEKSI    " << endl;
-    cout << "                GAME                  " << endl;
+    cout << "                     GAME                  " << endl;
     cout << "===================================================" << endl;
 };
 
 void fiturPage(){
-    cout << "              MENU FITUR                " << endl;
+    cout << "                  MENU FITUR                " << endl;
     cout << "===================================================" << endl;
     cout << "1. Input Data" << endl;
     cout << "2. Lihat List Game & Achievement" << endl;
@@ -64,8 +64,8 @@ void executeOpsi(ListGame &L, int opsi) {
             cout << "Judul Game       : "; cin >> title;
             cout << "Nama Achievement : "; cin >> achievementName;
 
-            adrGame p = L.first;
-            if (p->info.title == title) {
+            adrGame p = searchGameByTitle(L, title);
+            if (p != nullptr) {
                 addAchievement(p, createElmAchievement(achievementName));
                 cout << "Achievement berhasil ditambahkan\n";
             } else {
@@ -160,7 +160,7 @@ void executeOpsi(ListGame &L, int opsi) {
 
 
 
-    if (opsi == 5) { //Cari Game
+    else if (opsi == 5) { //Cari Game
         int subOpsi;
         cout << "\n=== MENU SEARCH ===\n";
         cout << "1. Judul\n";
@@ -255,7 +255,7 @@ void executeOpsi(ListGame &L, int opsi) {
         cout << "Berdasarkan\n";
         cout << "1. Genre\n";
         cout << "2. Platform\n";
-        cout << "2. Achievement\n";
+        cout << "3. Achievement\n";
         cout << "Pilih: ";
         cin >> subOpsi;
 
@@ -420,7 +420,6 @@ void addGame(ListGame &L, adrGame p) {
         L.last->next = p;
         p->prev = L.last;
         p->next = nullptr;
-        p->prev = nullptr;
         L.last = p;
     }
     p->next = nullptr;
@@ -954,8 +953,3 @@ void clearScreen() {
 }
 
 // End Ultility
-
-
-
-
-
