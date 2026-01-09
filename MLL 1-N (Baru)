@@ -764,7 +764,7 @@ void displayGame(adrGame p) {
 
 
 
-
+//Ni kenapa gak muncul muncul dah hasil sortingnya
 //Sorting
 
 // Urutkan Judul Game (A-Z)
