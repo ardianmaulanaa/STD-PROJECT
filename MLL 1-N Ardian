@@ -1,96 +1,412 @@
-CPP
-
 #include <iostream>
 #include "header_MLL.h"
+#include <limits>
 
+using namespace std;
+
+// #Greetings
 void welcomePage(){
-    cout << endl<< "===================================================" << endl;
-    cout << "      SELAMAT DATANG DI MANAJEMEN KOLEKSI    " << endl;
-    cout << "                GAME                  " << endl;
-    cout << "===================================================" << endl;
+    cout << endl<< "      ===================================================" << endl;
+    cout << "             SELAMAT DATANG DI MANAJEMEN KOLEKSI    " << endl;
+    cout << "                          GAME                  " << endl;
+    cout << "      ===================================================" << endl;
 };
 
-void fiturPage(){
-    cout << "              MENU FITUR                " << endl;
-    cout << "===================================================" << endl;
-    cout << "1. Masukkan Data Game" << endl;
-    cout << "2. Masukkan Data Achievement" << endl;
-    cout << "3. Lihat List Game" << endl;
-    cout << "4. Lihat List Achievement" << endl;
-    cout << "5. Hapus Data Game" << endl;
-    cout << "6. Hapus Data Achievement" << endl;
-    cout << "7. Update Data Game" << endl;
-    cout << "8. Update Data Achievement" << endl;
-    cout << "9. Cari Game" << endl;
-    cout << "10. Cari Achievement" << endl;
-    cout << "11. Urutkan Game" << endl;
-    cout << "12. Urutkan Achievement per Game" << endl;
-    cout << "13. Total Game " << endl;
-    cout << "14. Total Achievement" << endl;
-    cout << "15. Keluar" << endl;
-    cout << "===================================================" << endl;
+void fiturPage() {
+    cout << "\n+================================================================\n";
+    cout << "|                       MENU FITUR                              |\n";
+    cout << "=================================================================\n";
+    cout << "| 1. Input Data Game & Achievement                              |\n";
+    cout << "| 2. Lihat List Game & Achievement                              |\n";
+    cout << "| 3. Hapus Data                                                 |\n";
+    cout << "| 4. Update Data                                                |\n";
+    cout << "| 5. Cari Data Game                                             |\n";
+    cout << "| 6. Urutkan Game                                               |\n";
+    cout << "| 7. Total Game                                                 |\n";
+    cout << "| 8. Min / Max Achievement                                      |\n";
+    cout << "| 0. Keluar                                                     |\n";
+    cout << "=================================================================\n";
+}
 
-};
 
 void closeCMD(){
     cout << endl<< "===================================================" << endl;
-    cout << "      TERIMAKASIH SUDAH MENGAKSES MANAJEMEN KOLEKSI    " << endl;
-    cout << "                GAME                  " << endl;
+    cout << "   TERIMAKASIH SUDAH MENGAKSES MANAJEMEN KOLEKSI    " << endl;
+    cout << "                     GAME                  " << endl;
     cout << "===================================================" << endl<<endl;
 
 };
 
-void displayListGame(ListGame L) {
-    adrGame p = L.first;
-    cout << endl;
-    cout << "===================[LIST GAME]====================" << endl;
-    while (p != nullptr) {
-        cout << "ID Game                : ";
-        cout << p->info.GameID << endl;
-        cout << "Judul Game             : ";
-        cout << p->info.title << endl;
-        cout << "Genre                  : ";
-        cout << p->info.genre << endl;
-        cout << "Platform               : ";
-        cout << p->info.platform << endl;
+// Eksekusi
 
+void executeOpsi(ListGame &L, int opsi) {
 
-        adrAchievement q = p->firstACV;
-        if (q == nullptr) {
-            cout << "Achievements           : (Belum ada achievement)" << endl;
-        } else {
-            cout << "Achievements           : " << endl;
-            while (q != nullptr) {
-                cout << "   - " << q->info.achievementName << endl;
-                q = q->next;
+    string id, title, genre, platform;
+    string achievementName, oldName, newName;
+
+    // ============================ CREATE ============================
+    if (opsi == 1) {
+        int subOpsi;
+
+        cout << "\n+======================================+\n";
+        cout << "|              MENU CREATE              |\n";
+        cout << "+======================================+\n";
+        cout << "| 1. Tambah Game                        |\n";
+        cout << "| 2. Tambah Achievement                |\n";
+        cout << "+--------------------------------------+\n";
+        cout << " Pilih Menu : ";
+        cin >> subOpsi;
+
+        if (subOpsi == 1) {
+            cout << "\n+--------------------------------------+\n";
+            cout << "|            INPUT DATA GAME            |\n";
+            cout << "+--------------------------------------+\n";
+            cout << " ID Game   : "; cin >> id;
+            cout << " Judul     : "; cin >> title;
+            cout << " Genre     : "; cin >> genre;
+            cout << " Platform  : "; cin >> platform;
+
+            if (!isGameExists(L, title)) {
+                addGame(L, createElmGame(id, title, genre, platform));
+                cout << "\n[INFO] Game berhasil ditambahkan\n";
+            } else {
+                cout << "\n[WARNING] Game sudah ada\n";
             }
+
+        }
+        else if (subOpsi == 2) {
+            cout << "\n+--------------------------------------+\n";
+            cout << "|        INPUT DATA ACHIEVEMENT         |\n";
+            cout << "+--------------------------------------+\n";
+            cout << " Judul Game       : "; cin >> title;
+            cout << " Nama Achievement : "; cin >> achievementName;
+
+            adrGame p = searchGameByTitle(L, title);
+
+            if (p == nullptr) {
+                cout << "\n[ERROR] Game tidak ditemukan\n";
+            }
+            else {
+                // ===== CEK ACHIEVEMENT DUPLIKAT =====
+                bool sudahAda = false;
+                adrAchievement q = p->firstACV;
+
+                while (q != nullptr && !sudahAda) {
+                    if (q->info.achievementName == achievementName) {
+                        sudahAda = true;
+                    }
+                    q = q->next;
+                }
+
+                if (sudahAda) {
+                    cout << "\n[WARNING] Achievement sudah ada\n";
+                }
+                else {
+                    addAchievement(p, createElmAchievement(achievementName));
+                    cout << "\n[INFO] Achievement berhasil ditambahkan\n";
+                }
+            }
+
+        }
+        else {
+            cout << "\n[ERROR] Pilihan tidak valid\n";
+        }
+    }
+
+
+    // ============================ DISPLAY ============================
+    else if (opsi == 2) {
+        displayListGame(L);
+    }
+
+    // ============================ DELETE ============================
+    else if (opsi == 3) {
+    int subOpsi;
+
+    cout << "\n+======================================+\n";
+    cout << "|              MENU DELETE              |\n";
+    cout << "+======================================+\n";
+    cout << "| 1. Hapus Game                         |\n";
+    cout << "| 2. Hapus Achievement                  |\n";
+    cout << "+--------------------------------------+\n";
+    cout << " Pilih Menu : ";
+    cin >> subOpsi;
+
+    // ================= HAPUS GAME =================
+    if (subOpsi == 1) {
+        cout << "\n Judul Game : ";
+        cin >> title;
+
+        adrGame p = searchGameByTitle(L, title);
+
+        if (p == nullptr) {
+            cout << "\n[ERROR] Game tidak ditemukan\n";
+        } else {
+            deleteGameByTitle(L, title);
+            cout << "\n[INFO] Game berhasil dihapus\n";
+        }
+    }
+
+    // ============== HAPUS ACHIEVEMENT =============
+    else if (subOpsi == 2) {
+        cout << "\n Nama Achievement : ";
+        cin >> achievementName;
+
+        bool found = false;
+        adrGame p = L.first;
+
+        while (p != nullptr && !found) {
+            adrAchievement q = p->firstACV;
+
+            while (q != nullptr && !found) {
+                if (q->info.achievementName == achievementName) {
+                    found = true;
+                } else {
+                    q = q->next;
+                }
+            }
+            p = p->next;
         }
 
-        p = p->next;
-        cout << endl;
+        if (!found) {
+            cout << "\n[ERROR] Achievement tidak ditemukan\n";
+        } else {
+            deleteAchievementsByAchievementName(L, achievementName);
+            cout << "\n[INFO] Achievement berhasil dihapus\n";
+        }
+    }
+
+    // ================= INVALID ====================
+    else {
+        cout << "\n[ERROR] Pilihan tidak valid\n";
     }
 }
 
-// display list acv?
 
-// end procedure tampilan
+    // ============================ UPDATE ============================
+    else if (opsi == 4) {
+        int subOpsi;
 
-void executeOpsi(ListGame &L, adrGame game, adrAchievement acv, int opsi) {
+        cout << "\n+======================================+\n";
+        cout << "|              MENU UPDATE              |\n";
+        cout << "+======================================+\n";
+        cout << "| 1. Update Data Game                  |\n";
+        cout << "| 2. Update Nama Achievement           |\n";
+        cout << "+--------------------------------------+\n";
+        cout << " Pilih Menu : ";
+        cin >> subOpsi;
+
+        if (subOpsi == 1) {
+            updateGame(L);
+
+        } else if (subOpsi == 2) {
+            cout << "\n Judul Game    : "; cin >> title;
+            cout << " Nama Lama ACV : "; cin >> oldName;
+            cout << " Nama Baru ACV : "; cin >> newName;
+
+            updateAchievementName(L, title, oldName, newName);
+
+        } else {
+            cout << "\n[ERROR] Pilihan tidak valid\n";
+        }
+    }
+
+    // ============================ SEARCH ============================
+    else if (opsi == 5) {
+        int subOpsi;
+
+        cout << "\n+======================================+\n";
+        cout << "|              MENU SEARCH              |\n";
+        cout << "+======================================+\n";
+        cout << "| 1. Judul Game                        |\n";
+        cout << "| 2. Genre                             |\n";
+        cout << "| 3. Platform                          |\n";
+        cout << "| 4. Achievement Game                 |\n";
+        cout << "+--------------------------------------+\n";
+        cout << " Pilih Menu : ";
+        cin >> subOpsi;
+
+        if (subOpsi == 1) {
+            cout << "\n Judul Game : "; cin >> title;
+            adrGame p = searchGameByTitle(L, title);
+            if (p != nullptr) displayGame(p);
+            else cout << "\n[ERROR] Game tidak ditemukan\n";
+
+        } else if (subOpsi == 2) {
+            cout << "\n Genre : "; cin >> genre;
+            searchGameByGenre(L, genre);
+
+        } else if (subOpsi == 3) {
+            cout << "\n Platform : "; cin >> platform;
+            searchGameByPlatform(L, platform);
+
+        } else if (subOpsi == 4) {
+            cout << "\n Judul Game : "; cin >> title;
+            adrGame p = searchGameByTitle(L, title);
+            if (p != nullptr) searchAchievementByTitle(p);
+            else cout << "\n[ERROR] Game tidak ditemukan\n";
+
+        } else {
+            cout << "\n[ERROR] Pilihan tidak valid\n";
+        }
+    }
+
+    // ============================ SORT ============================
+   else if (opsi == 6) {
+    int subOpsi;
+
+    cout << "\n+======================================+\n";
+    cout << "|              MENU SORTING             |\n";
+    cout << "+======================================+\n";
+    cout << "| 1. Judul Game (A-Z)                  |\n";
+    cout << "| 2. Judul Game (Z-A)                  |\n";
+    cout << "| 3. Jumlah Achievement                |\n";
+    cout << "+--------------------------------------+\n";
+    cout << " Pilih Menu : ";
+    cin >> subOpsi;
+
+    if (subOpsi == 1) {
+        sortGameByTitleAZ(L);
+        cout << "\n[INFO] Game berhasil diurutkan (A-Z)\n";
+        displayListGame(L);
+
+    } else if (subOpsi == 2) {
+        sortGameByTitleZA(L);
+        cout << "\n[INFO] Game berhasil diurutkan (Z-A)\n";
+        displayListGame(L);
+
+    } else if (subOpsi == 3) {
+        sortGameByAchievementCount(L);
+        cout << "\n[INFO] Game berhasil diurutkan berdasarkan jumlah achievement\n";
+        displayListGame(L);
+
+    } else {
+        cout << "\n[ERROR] Pilihan tidak valid\n";
+    }
 }
 
 
+    // ============================ COUNT ============================
+    else if (opsi == 7) {
+        int subOpsi;
+
+        cout << "\n+======================================+\n";
+        cout << "|               MENU COUNT              |\n";
+        cout << "+======================================+\n";
+        cout << "| 1. Genre                             |\n";
+        cout << "| 2. Platform                          |\n";
+        cout << "| 3. Achievement Game                 |\n";
+        cout << "+--------------------------------------+\n";
+        cout << " Pilih Menu : ";
+        cin >> subOpsi;
+
+        if (subOpsi == 1) {
+            cout << "\n Genre : "; cin >> genre;
+            cout << " Total Game : " << countGameByGenre(L, genre) << endl;
+
+        } else if (subOpsi == 2) {
+            cout << "\n Platform : "; cin >> platform;
+            cout << " Total Game : " << countGameByPlatform(L, platform) << endl;
+
+        } else if (subOpsi == 3) {
+            cout << "\n Judul Game : "; cin >> title;
+            adrGame p = searchGameByTitle(L, title);
+            if (p != nullptr)
+                cout << " Total Achievement : "
+                     << countAchievement(p->firstACV) << endl;
+            else
+                cout << "\n[ERROR] Game tidak ditemukan\n";
+
+        } else {
+            cout << "\n[ERROR] Pilihan tidak valid\n";
+        }
+    }
+
+    // ============================ MIN / MAX ============================
+    else if (opsi == 8) {
+        int pilih;
+
+        cout << "\n+======================================+\n";
+        cout << "|            MENU MIN / MAX             |\n";
+        cout << "+======================================+\n";
+        cout << "| 1. Achievement Terbanyak             |\n";
+        cout << "| 2. Achievement Tersedikit            |\n";
+        cout << "+--------------------------------------+\n";
+        cout << " Pilih Menu : ";
+        cin >> pilih;
+
+        if (pilih == 1) {
+            adrGame p = getGameWithMaxAchievement(L);
+            if (p != nullptr)
+                cout << "\n[INFO] Game Terbanyak Achievement : " << p->info.title << endl;
+            else
+                cout << "\n[INFO] Belum ada data game\n";
+
+        } else if (pilih == 2) {
+            adrGame p = getGameWithMinAchievement(L);
+            if (p != nullptr)
+                cout << "\n[INFO] Game Tersedikit Achievement : " << p->info.title << endl;
+            else
+                cout << "\n[INFO] Belum ada data game\n";
+
+        } else {
+            cout << "\n[ERROR] Pilihan tidak valid\n";
+        }
+    }
+
+    pauseEnter();
+}
+
+
+
+
+
+
+
+//--------------------------------------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------//
+//--------------------------------------------------------------------------------------------------------//
+
+
+
+
+
+
+// ================== MASUKKAN DATA ====================== //
+// ======================= CREATE ======================= //
+
+
+
 void createListGame(ListGame &L) {
+/* I.S : ListGame L belum terdefinisi.
+F.S : ListGame L terinisialisasi dengan first = nullptr dan last = nullptr. */
+
     L.first = nullptr;
     L.last = nullptr;
 }
 bool isEmptyGame(ListGame L) {
+/*
+I.S : ListGame L terdefinisi.
+F.S : Mengembalikan true jika list game kosong, false jika tidak kosong.
+*/
+
     return (L.first == nullptr && L.last == nullptr);
 }
 bool isEmptyAchievement(adrGame p) {
+/*
+I.S : adrGame p terdefinisi.
+F.S : Mengembalikan true jika achievement pada game kosong, false jika tidak.
+*/
+
     return (p->firstACV == nullptr);
 }
 
-bool isGameExists(ListGame L, string judulGame){
+bool isGameExists(ListGame L, string judulGame) {
+/*
+I.S : ListGame L dan judulGame terdefinisi.
+F.S : Mengembalikan true jika game dengan judul tersebut ada, false jika tidak.
+*/
+
     adrGame p = L.first;
     while(p!= nullptr){
         if(p->info.title == judulGame){
@@ -101,8 +417,12 @@ bool isGameExists(ListGame L, string judulGame){
     return false;
 };
 
-
 adrGame createElmGame(string GameID, string title, string genre, string platform) {
+/*
+I.S : Data GameID, title, genre, dan platform terdefinisi.
+F.S : Mengembalikan adrGame baru dengan data game terisi dan pointer NULL.
+*/
+
     adrGame p = new elmGame;
 
     p->info.GameID = GameID;
@@ -118,6 +438,11 @@ adrGame createElmGame(string GameID, string title, string genre, string platform
 }
 
 adrAchievement createElmAchievement(string achievementName) {
+/*
+I.S : Nama achievement terdefinisi.
+F.S : Mengembalikan adrAchievement baru dengan data terisi dan pointer NULL.
+*/
+
     adrAchievement q = new elmAchievement;
 
     q->info.achievementName = achievementName;
@@ -129,12 +454,16 @@ adrAchievement createElmAchievement(string achievementName) {
 }
 
 
-// end utils
 
+// ======================= ADD ======================= //
 
 // Masukkan data Game dan Achievement
-
 void addGame(ListGame &L, adrGame p) {
+/*
+I.S : ListGame L terdefinisi dan adrGame p sudah dialokasikan.
+F.S : Game p ditambahkan ke akhir list game.
+*/
+
     if(isEmptyGame(L)) {
         L.first = p;
         L.last = p;
@@ -144,84 +473,335 @@ void addGame(ListGame &L, adrGame p) {
         L.last->next = p;
         p->prev = L.last;
         p->next = nullptr;
-        p->prev = nullptr;
         L.last = p;
     }
     p->next = nullptr;
 }
 
 void addAchievement(adrGame &q, adrAchievement p) {
-    adrAchievement x;
-    if (isEmptyAchievement(q)) {
+/*
+I.S : adrGame q terdefinisi dan adrAchievement p sudah dialokasikan.
+F.S : Achievement p ditambahkan ke akhir list achievement game q.
+*/
+
+   if (isEmptyAchievement(q)) {
         q->firstACV = p;
         p->next = nullptr;
         p->prev = nullptr;
     } else {
-        adrAchievement r = q->firstACV;
-        while (r->next != nullptr) {
-            r = r->next;
+        adrAchievement x = q->firstACV;
+        while (x->next != nullptr) {
+            x = x->next;
         }
-        r->next = p;
-        p->prev = r;
+        x->next = p;
+        p->prev = x;
         p->next = nullptr;
     }
 }
+//end input data Game dan Achievement
 
-// end input data Game dan Achievement
 
-// Hapus data Game dan Achievement
-void deleteGameByTitle(ListGame &L, string title) {
-    if(isEmptyGame(L)) {
-        adrGame p = searchGame(L, title);
-        if(!isEmptyGame(L)) {
-            if(p == L.first && p == L.last) {
-                L.first = nullptr;
-                L.last = nullptr;
-                cout << "Data berhasil dihapus" << endl;
-            } else if(p == L.first) {
 
-            }
-        }
-    }
-}
+// ======================= DISPLAY ======================= //
 
-void deleteAchievementsByAchievementName(ListGame &L, string achievementName) {
+// Lihat List Game & Achievement
+
+void displayListGame(ListGame L) {
+/*
+I.S : ListGame L terdefinisi.
+F.S : Seluruh data game dan achievement ditampilkan ke layar.
+*/
+
     adrGame p = L.first;
 
+    cout << "\n============================================================\n";
+    cout << "                        LIST GAME                           \n";
+    cout << "============================================================\n";
+
+    if (p == nullptr) {
+        cout << "Belum ada game yang tersimpan\n";
+        cout << "============================================================\n";
+        return;
+    }
+
+    int no = 1;
     while (p != nullptr) {
+        cout << "\n------------------------------------------------------------\n";
+        cout << "Game #" << no++ << endl;
+        cout << "------------------------------------------------------------\n";
+        cout << "ID Game   : " << p->info.GameID << endl;
+        cout << "Judul     : " << p->info.title << endl;
+        cout << "Genre     : " << p->info.genre << endl;
+        cout << "Platform  : " << p->info.platform << endl;
+        cout << "Achievement:\n";
+
         adrAchievement q = p->firstACV;
-        while (q != nullptr) {
-            if (q->info.achievementName == achievementName) {
-                adrAchievement nextChild = q->next;
-                if (q == p->firstACV) {
-                    p->firstACV = q->next;
-                    if (p->firstACV != nullptr) {
-                        p->firstACV->prev = nullptr;
-                    }
-                } else if (q->next == nullptr) {
-                    q->prev->next = nullptr;
-                } else {
-                    q->prev->next = q->next;
-                    q->next->prev = q->prev;
-                }
-                q = nextChild;
-            } else {
+        if (q == nullptr) {
+            cout << "  - (Belum ada achievement)\n";
+        } else {
+            int i = 1;
+            while (q != nullptr) {
+                cout << "  " << i++ << ". " << q->info.achievementName << endl;
                 q = q->next;
             }
         }
+
         p = p->next;
+    }
+
+    cout << "\n============================================================\n";
+}
+
+
+// End Display
+
+// ======================= DELETE ======================= //
+// ================= HAPUS DATA GAME ==================== //
+
+void deleteGameByTitle(ListGame &L, string title) {
+/*
+I.S : ListGame L dan judul game terdefinisi.
+F.S : Game dengan judul tersebut dihapus dari list jika ditemukan.
+*/
+
+
+    if (!isEmptyGame(L)) {
+        adrGame p = searchGameByTitle(L, title);
+        if (p != nullptr) {
+
+            if (p == L.first && p == L.last) {
+                L.first = nullptr;
+                L.last  = nullptr;
+            }
+            else if (p == L.first) {
+                L.first = p->next;
+                L.first->prev = nullptr;
+            }
+            else if (p == L.last) {
+                L.last = p->prev;
+                L.last->next = nullptr;
+            }
+            else {
+                p->prev->next = p->next;
+                p->next->prev = p->prev;
+            }
+
+            p->next = nullptr;
+            p->prev = nullptr;
+        }
     }
 }
 
-// end hapus data
+// ============== HAPUS DATA ACHIEVEMENT =============== /
 
-// mencari data game
+void deleteAchievementsByAchievementName(ListGame &L, string achievementName) {
+/*
+I.S : ListGame L dan nama achievement terdefinisi.
+F.S : Achievement dengan nama tersebut dihapus dari semua game yang memilikinya.
+*/
 
-adrGame searchGame(ListGame L, string title, string genre, string platform) {
-    adrGame p;
-    p = L.first;
+
+    if (!isEmptyGame(L)) {
+
+        adrGame p = L.first;
+
+        while (p != nullptr) {
+
+            adrAchievement q = p->firstACV;
+
+            while (q != nullptr) {
+                if (q->info.achievementName == achievementName) {
+                    adrAchievement nextNode = q->next;
+                    if (q == p->firstACV) {
+                        p->firstACV = q->next;
+                        if (p->firstACV != nullptr) {
+                            p->firstACV->prev = nullptr;
+                        }
+                    }
+                    else if (q->next == nullptr) {
+                        q->prev->next = nullptr;
+                    }
+                    else {
+                        q->prev->next = q->next;
+                        q->next->prev = q->prev;
+                    }
+
+                    q->next = nullptr;
+                    q->prev = nullptr;
+
+                    q = nextNode;
+                }
+                else {
+                    q = q->next;
+                }
+            }
+            p = p->next;
+        }
+    }
+}
+
+// End Delete
+
+
+
+
+
+
+// ======================= UPDATE ======================= //
+
+// ================== UPDATE DATA GAME ================= //
+
+void updateGame(ListGame &L) {
+/*
+I.S : ListGame L terdefinisi.
+F.S : Data game diperbarui sesuai pilihan user,
+      atau menampilkan pesan jika game/menu tidak valid tanpa menggunakan return di tengah.
+*/
+    if (L.first == nullptr) {
+        cout << "List game masih kosong\n";
+    } else {
+        string oldTitle;
+        cout << "Masukkan judul game yang akan diupdate: ";
+        cin >> oldTitle;
+
+
+        adrGame p = L.first;
+        while (p != nullptr && p->info.title != oldTitle) {
+            p = p->next;
+        }
+
+        if (p == nullptr) {
+            cout << "Game tidak ditemukan\n";
+        } else {
+
+            int subOpsi;
+            cout << "\n========== MENU UPDATE GAME ==========\n";
+            cout << "1. ID Game\n";
+            cout << "2. Judul Game\n";
+            cout << "3. Genre\n";
+            cout << "4. Platform\n";
+            cout << "5. Update Semua\n";
+            cout << "=====================================\n";
+            cout << "Pilihan: ";
+            cin >> subOpsi;
+
+            if (subOpsi == 1) {
+                cout << "ID baru: ";
+                cin >> p->info.GameID;
+                cout << "ID Game berhasil diperbarui\n";
+            } else if (subOpsi == 2) {
+                cout << "Judul baru: ";
+                cin >> p->info.title;
+                cout << "Judul Game berhasil diperbarui\n";
+            } else if (subOpsi == 3) {
+                cout << "Genre baru: ";
+                cin >> p->info.genre;
+                cout << "Genre berhasil diperbarui\n";
+            } else if (subOpsi == 4) {
+                cout << "Platform baru: ";
+                cin >> p->info.platform;
+                cout << "Platform berhasil diperbarui\n";
+            } else if (subOpsi == 5) {
+                cout << "ID baru: "; cin >> p->info.GameID;
+                cout << "Judul baru: "; cin >> p->info.title;
+                cout << "Genre baru: "; cin >> p->info.genre;
+                cout << "Platform baru: "; cin >> p->info.platform;
+                cout << "Seluruh data game berhasil diperbarui\n";
+            } else {
+                cout << "Pilihan menu tidak valid\n";
+            }
+        }
+    }
+}
+
+// ============== UPDATE DATA ACHIEVEMENT ============== //
+
+void updateAchievementName(ListGame &L, string &title, string &oldName, string &newName) {
+/*
+I.S : ListGame L, judul game, nama achievement lama dan baru terdefinisi.
+F.S : Achievement diperbarui jika ada.
+      Jika game / achievement tidak ditemukan → tidak ada perubahan.
+*/
+
+    if (L.first == nullptr) {
+        cout << "List game masih kosong\n";
+    }
+    else {
+        adrGame p = L.first;
+        bool gameFound = false;
+
+        while (p != nullptr && !gameFound) {
+            if (p->info.title == title) {
+                gameFound = true;
+
+                if (p->firstACV == nullptr) {
+                    cout << "Game belum memiliki achievement\n";
+                }
+                else {
+                    adrAchievement q = p->firstACV;
+                    bool achievementFound = false;
+
+                    while (q != nullptr && !achievementFound) {
+                        if (q->info.achievementName == oldName) {
+                            q->info.achievementName = newName;
+                            achievementFound = true;
+                        }
+                        else {
+                            q = q->next;
+                        }
+                    }
+
+                    if (achievementFound) {
+                        cout << "Nama achievement berhasil diperbarui\n";
+                        cout << "Daftar Achievement terbaru:\n";
+
+                        adrAchievement tampil = p->firstACV;
+                        int i = 1;
+                        while (tampil != nullptr) {
+                            cout << i++ << ". " << tampil->info.achievementName << endl;
+                            tampil = tampil->next;
+                        }
+                    }
+                    else {
+                        cout << "Achievement tidak ditemukan\n";
+                    }
+                }
+            }
+            else {
+                p = p->next;
+            }
+        }
+
+        if (!gameFound) {
+            cout << "Game tidak ditemukan\n";
+        }
+    }
+}
+
+
+
+// End Update
+
+
+
+
+
+
+// ======================= SEARCH ======================= //
+// ================== SEARCH DATA GAME ================= //
+
+// Cari List Game
+
+adrGame searchGameByTitle(ListGame L, string title) {
+/*
+I.S : ListGame L dan judul game terdefinisi.
+F.S : Mengembalikan alamat game jika ditemukan, nullptr jika tidak.
+*/
+
+    adrGame p = L.first;
+
     while (p != nullptr) {
-        if(p->info.title == title && p->info.genre == genre && p->info.platform == platform) {
+        if (p->info.title == title) {
             return p;
         }
         p = p->next;
@@ -229,56 +809,268 @@ adrGame searchGame(ListGame L, string title, string genre, string platform) {
     return nullptr;
 }
 
-adrAchievement searchAchievement(adrGame p, string achievementName) {
-    if (p->firstACV != nullptr){
-        adrAchievement q = p->firstACV;
-        while(q != nullptr) {
-            if(q->info.achievementName =  achievementName) {
-                return q;
-            }
-            q = q->next
-        }
-    }
-    return nullptr;
-}
+// Cari Game apa saja yang ada di genre tersebut
 
-void updateGameAddAchievement(ListGame &L, string &title, string &newAchievementName) {
- adrGame p = L.first;
+void searchGameByGenre(ListGame L, string genre) {
+/*
+I.S : ListGame L dan genre terdefinisi.
+F.S : Menampilkan seluruh game dengan genre tersebut.
+*/
+
+    adrGame p = L.first;
+    bool ketemu = false;
 
     while (p != nullptr) {
-        if (p->info.title == title) {
-            adrAchievement newNode = createElmAchievement(newAchievementName);
-            addAchievement(p, newNode);
+        if (p->info.genre == genre) {
+            cout << "- " << p->info.title << endl;
+            ketemu = true;
+        }
+        p = p->next;
+    }
+    if (!ketemu) {
+        cout << "Tidak ada game di genre tersebut\n";
+    }
+}
+
+// Cari Game apa saja yang ada di platform tersebut
+
+void searchGameByPlatform(ListGame L, string platform) {
+/*
+I.S : ListGame L dan platform terdefinisi.
+F.S : Menampilkan seluruh game pada platform tersebut.
+*/
+
+    adrGame p = L.first;
+    bool ketemu = false;
+
+    while (p != nullptr) {
+        if (p->info.platform == platform) {
+            cout << "- " << p->info.title << endl;
+            ketemu = true;
+        }
+        p = p->next;
+    }
+    if (!ketemu) {
+        cout << "Tidak ada game di platform tersebut\n";
+    }
+}
+
+// ============== SEARCH DATA ACHIEVEMENT ============== //
+
+void searchAchievementByTitle(adrGame p) {
+/*
+I.S : adrGame p terdefinisi.
+F.S : Menampilkan seluruh achievement milik game p.
+*/
+
+    if (p == nullptr) {
+        cout << "Game tidak ditemukan\n";
+    }
+
+    if (p->firstACV == nullptr) {
+        cout << "Game belum memiliki achievement\n";
+    }
+
+    adrAchievement q = p->firstACV;
+    cout << "Daftar Achievement:\n";
+
+    while (q != nullptr) {
+        cout << "- " << q->info.achievementName << endl;
+        q = q->next;
+    }
+}
+
+
+// Display Hasil Search
+
+void displayGame(adrGame p) {
+    cout << "ID       : " << p->info.GameID << endl;
+    cout << "Judul    : " << p->info.title << endl;
+    cout << "Genre    : " << p->info.genre << endl;
+    cout << "Platform : " << p->info.platform << endl;
+}
+
+
+// End Search
+
+
+
+// ======================= SORTING ========================= //
+
+// ================= SORTING JUDUL GAME =================== //
+
+// Urutkan Judul Game (A-Z)
+
+void sortGameByTitleAZ(ListGame &L) {
+/*
+I.S : ListGame L terdefinisi.
+F.S : Data game diurutkan berdasarkan judul A-Z.
+*/
+
+    adrGame p, t;
+
+    p = L.first;
+    while (p != nullptr) {
+        t = p->next;
+        while (t != nullptr) {
+            if (p->info.title > t->info.title) {
+
+                Game tempGame = p->info;
+                adrAchievement tempACV = p->firstACV;
+
+                p->info = t->info;
+                p->firstACV = t->firstACV;
+
+                t->info = tempGame;
+                t->firstACV = tempACV;
+            }
+            t = t->next;
         }
         p = p->next;
     }
 }
 
-// end cari data game
+// Urutkan Judul Game (Z-A)
 
-// edit | update data game
+void sortGameByTitleZA(ListGame &L) {
+/*
+I.S : ListGame L terdefinisi.
+F.S : Data game diurutkan berdasarkan judul Z-A.
+*/
 
-void updateAchievementName(ListGame &L, string &title, string &oldName, string &newName) {
-  adrGame p = L.first;
+    adrGame p, t;
 
+    p = L.first;
     while (p != nullptr) {
-        if (p->info.title == title) {
-            adrAchievement q = p->firstACV;
-            while (q != nullptr) {
-                if (q->info.achievementName == oldName) {
-                    q->info.achievementName = newName;
-                }
-                q = q->next;
+        t = p->next;
+        while (t != nullptr) {
+            if (p->info.title < t->info.title) {
+
+                Game tempGame = p->info;
+                adrAchievement tempACV = p->firstACV;
+
+                p->info = t->info;
+                p->firstACV = t->firstACV;
+
+                t->info = tempGame;
+                t->firstACV = tempACV;
             }
+            t = t->next;
         }
         p = p->next;
     }
 }
 
 
+// =========== SORTING JUMLAH ACHIEVEMENT ================= //
 
+void sortGameByAchievementCount(ListGame &L) {
+/*
+I.S : ListGame L terdefinisi.
+F.S : Data game diurutkan berdasarkan jumlah achievement terbanyak.
+*/
+
+    adrGame p, a;
+
+    p = L.first;
+    while (p != nullptr) {
+        a = p->next;
+
+        while (a != nullptr) {
+            if (countAchievement(p->firstACV) < countAchievement(a->firstACV)) {
+
+                Game tempGame = p->info;
+                adrAchievement tempACV = p->firstACV;
+
+                p->info = a->info;
+                p->firstACV = a->firstACV;
+
+                a->info = tempGame;
+                a->firstACV = tempACV;
+            }
+            a = a->next;
+        }
+        p = p->next;
+    }
+}
+
+// End Sorting
+
+
+
+
+
+
+// ======================= COUNT ======================== //
+
+// ================== COUNT DATA GAME ================== //
+
+// Total Game
+
+int countGameByTitle(ListGame L, string title) {
+/*
+I.S : ListGame L terdefinisi.
+F.S : Mengembalikan jumlah seluruh game.
+*/
+
+    int count = 0;
+    adrGame p = L.first;
+
+    while (p != nullptr) {
+        count++;
+        p = p->next;
+    }
+    return count;
+}
+
+// Total Game Berdasarkan Genre
+
+int countGameByGenre(ListGame L, string genre) {
+/*
+I.S : ListGame L dan genre terdefinisi.
+F.S : Mengembalikan jumlah game dengan genre tersebut.
+*/
+
+    int count = 0;
+    adrGame p = L.first;
+
+    while (p != nullptr) {
+        if (p->info.genre == genre) {
+            count++;
+        }
+        p = p->next;
+    }
+    return count;
+}
+
+//Total Game Berdasarkan Platform
+int countGameByPlatform(ListGame L, string platform) {
+/*
+I.S : ListGame L dan platform terdefinisi.
+F.S : Mengembalikan jumlah game pada platform tersebut.
+*/
+
+    int count = 0;
+    adrGame p = L.first;
+
+    while (p != nullptr) {
+        if (p->info.platform == platform) {
+            count++;
+        }
+        p = p->next;
+    }
+    return count;
+}
+
+
+// ============== COUNT DATA ACHIEVEMENT =============== //
 
 int countAchievement(adrAchievement firstACV) {
+/*
+I.S : Pointer first achievement terdefinisi.
+F.S : Mengembalikan jumlah achievement pada game.
+*/
+
     int count = 0;
     adrAchievement p = firstACV;
 
@@ -289,7 +1081,25 @@ int countAchievement(adrAchievement firstACV) {
     return count;
 }
 
+
+// End Count
+
+
+
+
+
+
+
+// ======================= MIN / MAX ==================== //
+
+// ===== GAME DENGAN ACHIEVEMENT TERBANYAK ============= //
+
 adrGame getGameWithMaxAchievement(ListGame L) {
+/*
+I.S : ListGame L terdefinisi.
+F.S : Mengembalikan game dengan achievement terbanyak.
+*/
+
     if (isEmptyGame(L)) {
         return nullptr;
     }
@@ -298,21 +1108,58 @@ adrGame getGameWithMaxAchievement(ListGame L) {
     int maxCount = countAchievement(p->firstACV);
 
     while (p != nullptr) {
-    int currentCount = countAchievement(p->firstACV);
-    if (currentCount > maxCount) {
-        maxCount = currentCount;
-        maxGame = p;
-        }
-    p=p->next;
+        int currentCount = countAchievement(p->firstACV);
+        if (currentCount > maxCount) {
+                maxCount = currentCount;
+                maxGame = p;
+            }
+        p=p->next;
 
-    }
-return maxGame;
+        }
+    return maxGame;
 }
 
-adrGame getGameWithMinAchievement(ListGame L);
-void viewMaxAchievement(ListGame L);
-void viewMinAchievement(ListGame L);
+// ===== GAME DENGAN ACHIEVEMENT TERSEDIKIT ============ //
+
+adrGame getGameWithMinAchievement(ListGame L) {
+/*
+I.S : ListGame L terdefinisi.
+F.S : Mengembalikan game dengan achievement tersedikit.
+*/
+
+    if (isEmptyGame(L)) {
+        return nullptr;
+    }
+    adrGame p = L.first;
+    adrGame minGame = p;
+    int minCount = countAchievement(p->firstACV);
+
+    while (p != nullptr) {
+        int currentCount = countAchievement(p->firstACV);
+        if (currentCount < minCount) {
+                minCount = currentCount;
+                minGame = p;
+            }
+        p=p->next;
+
+        }
+    return minGame;
+}
+
+// End Min/Max
 
 
+void pauseEnter() {
+    cout << "\nTekan ENTER untuk melanjutkan...";
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    cin.get();
+}
 
-using namespace std;
+
+// ======================= UTILITY ====================== //
+
+void clearScreen() {
+    system("cls"); //Hanya bisa untuk windows
+}
+
+// End Ultility
