@@ -2,8 +2,40 @@
 #include "header_MLL.h"
 using namespace std;
 
-int main()
-{
-    cout << "Input Nama Game-" << endl;
+int main() {
+
+    ListGame L;
+    createListGame(L);
+
+    int opsi = -1;
+    bool inputValid;
+
+    welcomePage();
+
+    while (opsi != 0) {
+        fiturPage();
+        cout << "Pilih opsi: ";
+        cin >> opsi;
+
+        inputValid = true;
+
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(10000, '\n');
+
+            clearScreen();
+            cout << "[!] Input harus berupa ANGKA!\n";
+            pauseEnter();
+
+            opsi = -1;
+            inputValid = false;
+        }
+
+        if (inputValid && opsi != 0) {
+            executeOpsi(L, opsi);
+        }
+    }
+
+    closeCMD();
     return 0;
 }
