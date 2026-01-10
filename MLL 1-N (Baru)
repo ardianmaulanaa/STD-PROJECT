@@ -7,7 +7,8 @@ int main() {
     ListGame L;
     createListGame(L);
 
-    int opsi;
+    int opsi = -1;
+    bool inputValid;
 
     welcomePage();
 
@@ -16,10 +17,25 @@ int main() {
         cout << "Pilih opsi: ";
         cin >> opsi;
 
-        if (opsi != 0) {
+        inputValid = true;
+
+        if (cin.fail()) {
+            cin.clear();
+            cin.ignore(10000, '\n');
+
+            clearScreen();
+            cout << "[!] Input harus berupa ANGKA!\n";
+            pauseEnter();
+
+            opsi = -1;
+            inputValid = false;
+        }
+
+        if (inputValid && opsi != 0) {
             executeOpsi(L, opsi);
         }
     }
+
     closeCMD();
     return 0;
 }
