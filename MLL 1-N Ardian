@@ -4,8 +4,8 @@
 #include <iostream>
 using namespace std;
 
-typedef struct elmGame *adrGame;
-typedef struct elmAchievement *adrAchievement;
+typedef struct elmGame*adrGame;
+typedef struct elmAchievement*adrAchievement;
 
 struct Game {
     string GameID;
@@ -41,10 +41,15 @@ void fiturPage();
 void welcomePage();
 void closeCMD();
 
+//Eksekusi Fitur
+//void executeOpsi(ListGame &L, adrGame game, adrAchievement acv, int opsi);
+void executeOpsi(ListGame &L, int opsi);
+
 //Create
 void createListGame(ListGame &L);
 bool isEmptyGame(ListGame L);
 bool isEmptyAchievement(adrAchievement p);
+bool isGameExists(ListGame L, string judulGame);
 adrGame createElmGame(string GameID, string title, string genre, string platform);
 adrAchievement createElmAchievement(string achievementName);
 
@@ -52,44 +57,43 @@ adrAchievement createElmAchievement(string achievementName);
 void addGame(ListGame &L, adrGame p);
 void addAchievement(adrGame &p, adrAchievement q);
 
-//Search
-adrGame searchGame(ListGame L, string title, string genre, string platform);
-adrAchievement searchAchievement(adrGame p, string achievementName);
-
-//Count
-int countAchievement(adrAchievement firstACV);
-
-//Get
-adrGame getGameWithMaxAchievement(ListGame L);
-adrGame getGameWithMinAchievement(ListGame L);
-
-//View
-void viewMaxAchievement(ListGame L);
-void viewMinAchievement(ListGame L);
-
 //Display
-void displayGameList(ListGame L);
+void displayListGame(ListGame L);
+void displayGame(adrGame p);
+
 
 //Delete
 void deleteGameByTitle(ListGame &L, string title);
 void deleteAchievementsByAchievementName(ListGame &L, string achievementName);
 
 //Update
-void updateGameAddAchievement(ListGame &L, string &title, string &newAchievementName);
+void updateGame(ListGame &L);
 void updateAchievementName(ListGame &L, string &title, string &oldName, string &newName);
 
+//Search
+adrGame searchGameByTitle(ListGame L, string title);
+void searchGameByGenre(ListGame L, string genre);
+void searchGameByPlatform(ListGame L, string platform);
+void searchAchievementByTitle(adrGame p);
+
 //Sorting
-void sortGameByTitle(ListGame &L);
-void sortGameByGenre(ListGame &L);
-void sortGameByPlatform(ListGame &L);
+void sortGameByTitleAZ(ListGame &L);
+void sortGameByTitleZA(ListGame &L);
 void sortGameByAchievementCount(ListGame &L);
 
-//Menu
-void mainMenu(ListGame &L);
-void gameMenu(ListGame &L);
-void achievementMenu(ListGame &L);
+//Count
+int countGameByTitle(ListGame L, string title);
+int countAchievement(adrAchievement firstACV);
+int countGameByPlatform(ListGame L, string platform);
+int countGameByGenre(ListGame L, string genre);
+
+//GetMinMax
+adrGame getGameWithMaxAchievement(ListGame L);
+adrGame getGameWithMinAchievement(ListGame L);
+
 
 //Utility
+void pauseEnter();
 void clearScreen();
 
 #endif // HEADER(MLL)_H_INCLUDED
