@@ -77,7 +77,8 @@ void searchGameByPlatform(ListGame L, string platform);
 void searchAchievementByTitle(adrGame p);
 
 //Sorting
-void sortGameByTitle(ListGame &L);
+void sortGameByTitleAZ(ListGame &L);
+void sortGameByTitleZA(ListGame &L);
 void sortGameByAchievementCount(ListGame &L);
 
 //Count
@@ -86,12 +87,13 @@ int countAchievement(adrAchievement firstACV);
 int countGameByPlatform(ListGame L, string platform);
 int countGameByGenre(ListGame L, string genre);
 
-//Get
+//GetMinMax
 adrGame getGameWithMaxAchievement(ListGame L);
 adrGame getGameWithMinAchievement(ListGame L);
 
 
 //Utility
+void pauseEnter();
 void clearScreen();
 
 #endif // HEADER(MLL)_H_INCLUDED
